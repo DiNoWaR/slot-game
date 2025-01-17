@@ -43,7 +43,7 @@ public class GameConfig {
         return symbols;
     }
 
-    private static class Symbol {
+    public static class Symbol {
         @JsonProperty("reward_multiplier")
         private double rewardMultiplier;
 
@@ -73,7 +73,7 @@ public class GameConfig {
         }
     }
 
-    private static class Probabilities {
+    public static class Probabilities {
 
         @JsonProperty("standard_symbols")
         private List<StandardSymbol> standardSymbols;
@@ -94,7 +94,7 @@ public class GameConfig {
         }
     }
 
-    private static class StandardSymbol {
+    public static class StandardSymbol {
         @JsonProperty("column")
         private Integer column;
 
@@ -117,7 +117,7 @@ public class GameConfig {
         }
     }
 
-    private static class BonusSymbol {
+    public static class BonusSymbol {
         @JsonProperty("symbols")
         private Map<String, Integer> symbols;
 
@@ -127,7 +127,7 @@ public class GameConfig {
 
     }
 
-    private static class WinCombination {
+    public static class WinCombination {
         @JsonProperty("reward_multiplier")
         private Integer rewardMultiplier;
 

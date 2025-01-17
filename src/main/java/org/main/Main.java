@@ -3,8 +3,12 @@ package org.main;
 import org.apache.commons.cli.*;
 import org.config.model.GameConfig;
 import org.config.parser.Parser;
+import org.generator.Generator;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
@@ -20,17 +24,33 @@ public class Main {
             CommandLine cmd = parser.parse(options, args);
 
             String configPath = cmd.getOptionValue("config");
-            String bettingAmount = cmd.getOptionValue("betting-amount");
+            String bettingAmountStr = cmd.getOptionValue("betting-amount");
 
-            if (configPath == null || bettingAmount == null) {
+            if (configPath == null || bettingAmountStr == null) {
                 throw new ParseException("Both --config and --betting-amount are required");
             }
 
-            System.out.println("Configuration file path: " + configPath);
-            System.out.println("Betting amount: " + bettingAmount);
+            double bettingAmount;
+            try {
+                bettingAmount = Double.parseDouble(bettingAmountStr);
+            } catch (NumberFormatException e) {
+                throw new ParseException("Betting amount must be a valid number");
+            }
 
             GameConfig config = Parser.parseConfig(configPath);
-            System.out.println(config.getProbabilities());
+            var generator = new Generator();
+            String[][] matrix = generator.generateMatrix(config);
+
+            System.out.println("Generated Matrix:");
+            for (String[] row : matrix) {
+                System.out.println(Arrays.toString(row));
+            }
+
+            Map<String, List<String>> winningCombinations = generator.checkWinningCombinations(matrix, config);
+            double reward = generator.calculateReward(bettingAmount, winningCombinations, config);
+            reward = generator.applyBonus(reward, matrix, config);
+
+            System.out.println("Final Reward: " + reward);
 
         } catch (ParseException e) {
             System.err.println("Error parsing arguments: " + e.getMessage());
