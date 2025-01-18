@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class Parser {
     public static GameConfig parseConfig(String filePath) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
+        var objectMapper = new ObjectMapper();
         return objectMapper.readValue(new File(filePath), GameConfig.class);
     }
 }

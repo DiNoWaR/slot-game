@@ -1,0 +1,149 @@
+package org.generator;
+
+import org.config.model.GameConfig;
+
+import java.util.*;
+
+public class GameProcessor {
+
+    /**
+     * We assume that bonus symbol possibility is 10% because it is not mentioned in TD
+     */
+    private static final int BONUS_SYMBOL_POSSIBILITY = 10;
+
+    private final Random random = new Random();
+
+    public String[][] generateMatrix(GameConfig config) {
+        var rows = config.getRows();
+        var columns = config.getColumns();
+        var matrix = new String[rows][columns];
+
+        var standardSymbols = config.getProbabilities().getStandardSymbols();
+        var bonusSymbols = config.getProbabilities().getBonusSymbols().getSymbols();
+
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < columns; col++) {
+                if (isBonus(random)) {
+                    matrix[row][col] = getRandomBonusSymbol(bonusSymbols);
+                } else {
+                    matrix[row][col] = getRandomStandardSymbol(standardSymbols, row, col);
+                }
+            }
+        }
+        return matrix;
+    }
+
+    public Map<String, List<String>> checkWinningCombinations(String[][] matrix, GameConfig config) {
+        Map<String, List<String>> winningCombinations = new HashMap<>();
+
+        // "same_symbols"
+        checkSameSymbols(matrix, config, winningCombinations);
+
+        // "linear_symbols"
+        checkLinearSymbols(matrix, config, winningCombinations);
+
+        return winningCombinations;
+    }
+
+    private void checkSameSymbols(String[][] matrix, GameConfig config, Map<String, List<String>> winningCombinations) {
+        Map<String, Integer> symbolCounts = new HashMap<>();
+
+        for (String[] row : matrix) {
+            for (String cell : row) {
+                symbolCounts.put(cell, symbolCounts.getOrDefault(cell, 0) + 1);
+            }
+        }
+
+        for (Map.Entry<String, GameConfig.WinCombination> entry : config.getWinCombinations().entrySet()) {
+            GameConfig.WinCombination combination = entry.getValue();
+            if ("same_symbols".equals(combination.getWhen())) {
+                for (Map.Entry<String, Integer> symbolCount : symbolCounts.entrySet()) {
+                    if (symbolCount.getValue() >= combination.getCount()) {
+                        winningCombinations.putIfAbsent(symbolCount.getKey(), new ArrayList<>());
+                        winningCombinations.get(symbolCount.getKey()).add(entry.getKey());
+                    }
+                }
+            }
+        }
+    }
+
+    private void checkLinearSymbols(String[][] matrix, GameConfig config, Map<String, List<String>> winningCombinations) {
+        for (Map.Entry<String, GameConfig.WinCombination> entry : config.getWinCombinations().entrySet()) {
+            GameConfig.WinCombination combination = entry.getValue();
+            if ("linear_symbols".equals(combination.getWhen())) {
+                for (List<String> area : combination.getCoveredAreas()) {
+                    if (isWinningArea(matrix, area)) {
+                        String symbol = getSymbolAt(matrix, area.getFirst());
+                        winningCombinations.putIfAbsent(symbol, new ArrayList<>());
+                        winningCombinations.get(symbol).add(entry.getKey());
+                    }
+                }
+            }
+        }
+    }
+
+    private String getRandomStandardSymbol(List<GameConfig.StandardSymbol> symbols, int row, int col) {
+        for (GameConfig.StandardSymbol symbolConfig : symbols) {
+            if (symbolConfig.getRow() == row && symbolConfig.getColumn() == col) {
+                var symbolWeights = symbolConfig.getSymbols();
+                var totalWeight = symbolWeights.values().stream().mapToInt(Integer::intValue).sum();
+                var randomValue = random.nextInt(totalWeight);
+
+                var cumulativeWeight = 0;
+                for (Map.Entry<String, Integer> entry : symbolWeights.entrySet()) {
+                    cumulativeWeight += entry.getValue();
+                    if (randomValue < cumulativeWeight) {
+                        return entry.getKey();
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private String getRandomBonusSymbol(Map<String, Integer> bonusSymbols) {
+        var totalWeight = bonusSymbols.values().stream().mapToInt(Integer::intValue).sum();
+        if (totalWeight == 0) {
+            return "MISS";
+        }
+
+        var randomValue = random.nextInt(totalWeight);
+        var cumulativeWeight = 0;
+
+        for (Map.Entry<String, Integer> entry : bonusSymbols.entrySet()) {
+            cumulativeWeight += entry.getValue();
+            if (randomValue < cumulativeWeight) {
+                return entry.getKey();
+            }
+        }
+        return "MISS";
+    }
+
+    private boolean isBonus(Random random) {
+        return random.nextInt(100) < BONUS_SYMBOL_POSSIBILITY;
+    }
+
+    private String getSymbolAt(String[][] matrix, String cell) {
+        var parts = cell.split(":");
+        var row = Integer.parseInt(parts[0]);
+        var col = Integer.parseInt(parts[1]);
+        return matrix[row][col];
+    }
+
+    private boolean isWinningArea(String[][] matrix, List<String> area) {
+        String firstSymbol = null;
+        for (String cell : area) {
+            var parts = cell.split(":");
+            var row = Integer.parseInt(parts[0]);
+            var col = Integer.parseInt(parts[1]);
+            var currentSymbol = matrix[row][col];
+
+            if (firstSymbol == null) {
+                firstSymbol = currentSymbol;
+            } else if (!firstSymbol.equals(currentSymbol)) {
+                return false;
+            }
+        }
+        return true;
+    }
+}

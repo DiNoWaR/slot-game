@@ -2,10 +2,12 @@ package org.main;
 
 import org.apache.commons.cli.*;
 import org.config.parser.Parser;
-import org.generator.Generator;
+import org.generator.GameProcessor;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
@@ -35,13 +37,20 @@ public class Main {
             }
 
             var config = Parser.parseConfig(configPath);
-            var generator = new Generator();
-            var matrix = generator.generateMatrix(config);
+            var gameProcessor = new GameProcessor();
+            var matrix = gameProcessor.generateMatrix(config);
 
             System.out.println("Generated Matrix:");
             for (String[] row : matrix) {
                 System.out.println(Arrays.toString(row));
             }
+
+            //
+            var winCombs = gameProcessor.checkWinningCombinations(matrix, config);
+            for (Map.Entry<String, List<String>> entry : winCombs.entrySet()) {
+                System.out.printf("%s: %s%n", entry.getKey(), entry.getValue());
+            }
+            //
 
         } catch (ParseException e) {
             System.err.println("Error parsing arguments: " + e.getMessage());
