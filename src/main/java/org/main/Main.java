@@ -6,8 +6,6 @@ import org.generator.GameProcessor;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
@@ -23,15 +21,18 @@ public class Main {
             var cmd = parser.parse(options, args);
 
             var configPath = cmd.getOptionValue("config");
-            var bettingAmountStr = cmd.getOptionValue("betting-amount");
+            var betAmountStr = cmd.getOptionValue("betting-amount");
 
-            if (configPath == null || bettingAmountStr == null) {
+            if (configPath == null || betAmountStr == null) {
                 throw new ParseException("Both --config and --betting-amount are required");
             }
 
-            double bettingAmount;
+            double betAmount;
             try {
-                bettingAmount = Double.parseDouble(bettingAmountStr);
+                betAmount = Double.parseDouble(betAmountStr);
+                if (betAmount <= 0) {
+                    throw new IllegalArgumentException("Bet amount must be greater than zero.");
+                }
             } catch (NumberFormatException e) {
                 throw new ParseException("Betting amount must be a valid number");
             }
@@ -45,12 +46,6 @@ public class Main {
                 System.out.println(Arrays.toString(row));
             }
 
-            //
-            var winCombs = gameProcessor.checkWinningCombinations(matrix, config);
-            for (Map.Entry<String, List<String>> entry : winCombs.entrySet()) {
-                System.out.printf("%s: %s%n", entry.getKey(), entry.getValue());
-            }
-            //
 
         } catch (ParseException e) {
             System.err.println("Error parsing arguments: " + e.getMessage());

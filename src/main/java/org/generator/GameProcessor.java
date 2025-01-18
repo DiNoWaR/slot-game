@@ -36,13 +36,40 @@ public class GameProcessor {
     public Map<String, List<String>> checkWinningCombinations(String[][] matrix, GameConfig config) {
         Map<String, List<String>> winningCombinations = new HashMap<>();
 
-        // "same_symbols"
         checkSameSymbols(matrix, config, winningCombinations);
-
-        // "linear_symbols"
         checkLinearSymbols(matrix, config, winningCombinations);
 
         return winningCombinations;
+    }
+
+    public double calculateReward(double betAmount, Map<String, List<String>> winningCombinations, GameConfig config) {
+        if (betAmount <= 0) {
+            throw new IllegalArgumentException("Bet amount must be greater than zero.");
+        }
+
+        double totalReward = 0;
+
+        for (Map.Entry<String, List<String>> entry : winningCombinations.entrySet()) {
+            var symbol = entry.getKey();
+            var combinations = entry.getValue();
+
+            var configSymbol = config.getSymbols().get(symbol);
+            if (configSymbol == null) {
+                continue;
+            }
+
+            var symbolReward = betAmount * configSymbol.getRewardMultiplier();
+            for (String combinationName : combinations) {
+                GameConfig.WinCombination winCombination = config.getWinCombinations().get(combinationName);
+                if (winCombination != null) {
+                    symbolReward *= winCombination.getRewardMultiplier();
+                }
+            }
+
+            totalReward += symbolReward;
+        }
+
+        return totalReward;
     }
 
     private void checkSameSymbols(String[][] matrix, GameConfig config, Map<String, List<String>> winningCombinations) {
