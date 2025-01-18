@@ -2,11 +2,37 @@ plugins {
     id 'java'
 }
 
-group = 'org.example'
-version = '1.0-SNAPSHOT'
+group = 'org.game'
+version = '1.0'
 
 repositories {
     mavenCentral()
+}
+
+tasks.named('jar') {
+    manifest {
+        attributes(
+                'Main-Class': 'org.main.Main'
+        )
+    }
+}
+
+tasks.register('fatJar', Jar) {
+    group = 'build'
+    description = 'Assembles a jar archive containing the main classes and all dependencies.'
+
+    manifest {
+        attributes(
+                'Main-Class': 'org.main.Main'
+        )
+    }
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    with tasks.named('jar').get()
 }
 
 dependencies {
