@@ -134,7 +134,7 @@ public class GameConfig {
 
     public static class WinCombination {
         @JsonProperty("reward_multiplier")
-        private Integer rewardMultiplier;
+        private Double rewardMultiplier;
 
         @JsonProperty("when")
         private String when;
@@ -150,7 +150,7 @@ public class GameConfig {
 
 
         public WinCombination(
-                @JsonProperty("reward_multiplier") Integer rewardMultiplier,
+                @JsonProperty("reward_multiplier") Double rewardMultiplier,
                 @JsonProperty("when") String when,
                 @JsonProperty("count") Integer count,
                 @JsonProperty("group") String group,
@@ -162,7 +162,7 @@ public class GameConfig {
             this.coveredAreas = coveredAreas;
         }
 
-        public Integer getRewardMultiplier() {
+        public Double getRewardMultiplier() {
             return rewardMultiplier;
         }
 

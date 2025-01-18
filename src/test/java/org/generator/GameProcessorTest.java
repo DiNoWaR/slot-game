@@ -1,14 +1,33 @@
 package org.generator;
 
 import org.config.model.GameConfig;
+import org.config.parser.Parser;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class GameProcessorTest {
+
+    private GameConfig config;
+    private GameProcessor processor;
+    private Double betAmount;
+
+    @BeforeEach
+    void setUp() {
+        try {
+            config = Parser.parseConfig("config.json");
+            processor = new GameProcessor();
+            betAmount = 1000.0;
+        } catch (IOException err) {
+            throw new RuntimeException(err);
+        }
+    }
 
     @Test
     void testCheckWinningCombinationsWithSameSymbols() {
@@ -18,26 +37,6 @@ class GameProcessorTest {
                 {"E", "F", "G"}
         };
 
-        var config = new GameConfig();
-        config.setWinCombinations(Map.of(
-                "same_symbol_3_times",
-                new GameConfig.WinCombination(
-                        1,
-                        "same_symbols",
-                        3,
-                        "same_symbols",
-                        null
-                ),
-                "same_symbols_horizontally",
-                new GameConfig.WinCombination(
-                        2,
-                        "linear_symbols",
-                        null,
-                        "horizontally_linear_symbols",
-                        List.of(List.of("0:0", "0:1", "0:2"), List.of("1:0", "1:1", "1:2"), List.of("2:0", "2:1", "2:2")))
-        ));
-
-        var processor = new GameProcessor();
         var result = processor.checkWinningCombinations(matrix, config);
         var expected = Map.of("A", List.of("same_symbol_3_times", "same_symbols_horizontally"));
 
@@ -52,26 +51,6 @@ class GameProcessorTest {
                 {"G", "H", "I"}
         };
 
-        var config = new GameConfig();
-        config.setWinCombinations(Map.of(
-                "same_symbol_3_times",
-                new GameConfig.WinCombination(
-                        1,
-                        "same_symbols",
-                        3,
-                        "same_symbols",
-                        null
-                ),
-                "same_symbols_horizontally",
-                new GameConfig.WinCombination(
-                        2,
-                        "linear_symbols",
-                        null,
-                        "horizontally_linear_symbols",
-                        List.of(List.of("0:0", "0:1", "0:2"), List.of("1:0", "1:1", "1:2"), List.of("2:0", "2:1", "2:2")))
-        ));
-
-        var processor = new GameProcessor();
         var result = processor.checkWinningCombinations(matrix, config);
 
         var expected = Map.of();
@@ -86,26 +65,6 @@ class GameProcessorTest {
                 {"A", "H", "I"}
         };
 
-        var config = new GameConfig();
-        config.setWinCombinations(Map.of(
-                "same_symbol_3_times",
-                new GameConfig.WinCombination(
-                        1,
-                        "same_symbols",
-                        3,
-                        "same_symbols",
-                        null
-                ),
-                "same_symbols_vertically",
-                new GameConfig.WinCombination(
-                        2,
-                        "linear_symbols",
-                        null,
-                        "vertically_linear_symbols",
-                        List.of(List.of("0:0", "1:0", "2:0"), List.of("0:1", "1:1", "2:1"), List.of("0:2", "1:2", "2:2")))
-        ));
-
-        var processor = new GameProcessor();
         var result = processor.checkWinningCombinations(matrix, config);
         var expected = Map.of("A", List.of("same_symbol_3_times", "same_symbols_vertically"));
 
@@ -120,27 +79,6 @@ class GameProcessorTest {
                 {"G", "H", "A"}
         };
 
-        var config = new GameConfig();
-        config.setWinCombinations(Map.of(
-                "same_symbol_3_times",
-                new GameConfig.WinCombination(
-                        1,
-                        "same_symbols",
-                        3,
-                        "same_symbols",
-                        null
-                ),
-                "same_symbols_diagonally",
-                new GameConfig.WinCombination(
-                        5,
-                        "linear_symbols",
-                        null,
-                        "diagonal_linear_symbols",
-                        List.of(List.of("0:0", "1:1", "2:2"), List.of("0:2", "1:1", "2:0")))
-        ));
-
-        var processor = new GameProcessor();
-
         var result = processor.checkWinningCombinations(matrix, config);
         var expected = Map.of("A", List.of("same_symbol_3_times", "same_symbols_diagonally"));
 
@@ -154,27 +92,6 @@ class GameProcessorTest {
                 {"B", "B", "B"},
                 {"C", "D", "E"}
         };
-
-        var config = new GameConfig();
-        config.setWinCombinations(Map.of(
-                "same_symbol_3_times",
-                new GameConfig.WinCombination(
-                        1,
-                        "same_symbols",
-                        3,
-                        "same_symbols",
-                        null
-                ),
-                "same_symbols_horizontally",
-                new GameConfig.WinCombination(
-                        2,
-                        "linear_symbols",
-                        null,
-                        "horizontally_linear_symbols",
-                        List.of(List.of("0:0", "0:1", "0:2"), List.of("1:0", "1:1", "1:2"), List.of("2:0", "2:1", "2:2")))
-        ));
-
-        var processor = new GameProcessor();
 
         var result = processor.checkWinningCombinations(matrix, config);
         var expected = Map.of(
@@ -193,31 +110,65 @@ class GameProcessorTest {
                 {"D", "E", "F"}
         };
 
-        var config = new GameConfig();
-        config.setWinCombinations(Map.of(
-                "same_symbol_3_times",
-                new GameConfig.WinCombination(
-                        1,
-                        "same_symbols",
-                        3,
-                        "same_symbols",
-                        null
-                ),
-                "same_symbols_horizontally",
-                new GameConfig.WinCombination(
-                        2,
-                        "linear_symbols",
-                        null,
-                        "horizontally_linear_symbols",
-                        List.of(List.of("0:0", "0:1", "0:2"), List.of("1:0", "1:1", "1:2"), List.of("2:0", "2:1", "2:2")))
-        ));
-
-        var processor = new GameProcessor();
-
         var result = processor.checkWinningCombinations(matrix, config);
         var expected = Map.of("A", List.of("same_symbol_3_times", "same_symbols_horizontally"));
 
         assertEquals(expected, result, "");
+    }
+
+    @Test
+    void testCheckWinningCombinationsWithFourSameSymbols() {
+        String[][] matrix = {
+                {"C", "F", "F"},
+                {"E", "F", "F"},
+                {"A", "D", "E"}
+        };
+
+        var result = processor.checkWinningCombinations(matrix, config);
+        var expected = Map.of(
+                "F", List.of("same_symbol_4_times")
+        );
+
+        assertEquals(expected, result, "");
+    }
+
+    @Test
+    void testCheckWinningCombinationsFourDifferentSymbols() {
+        String[][] matrix = {
+                {"F", "D", "E"},
+                {"C", "B", "E"},
+                {"F", "E", "F"}
+        };
+
+        var result = processor.checkWinningCombinations(matrix, config);
+        var expected = Map.of(
+                "F", List.of("same_symbol_3_times"),
+                "E", List.of("same_symbol_3_times")
+        );
+
+        assertEquals(expected, result, "");
+    }
+
+    @Test
+    void testCheckWinningCombinationsBgg() {
+        String[][] matrix = {
+                {"E", "E", "F"},
+                {"F", "F", "F"},
+                {"10x", "F", "F"}
+        };
+
+        var result = processor.checkWinningCombinations(matrix, config);
+        var expected = Map.of("F", List.of("same_symbol_6_times", "same_symbols_horizontally", "same_symbols_vertically"));
+
+        assertEquals(result.keySet(), expected.keySet(), "");
+
+        for (String key : expected.keySet()) {
+            assertEquals(
+                    Set.copyOf(expected.get(key)),
+                    Set.copyOf(result.get(key)),
+                    ""
+            );
+        }
     }
 
 }
