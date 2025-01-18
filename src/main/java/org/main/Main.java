@@ -11,8 +11,8 @@ public class Main {
     public static void main(String[] args) {
         var options = new Options();
 
-        options.addOption("c", "config", true, "Path to the configuration file");
-        options.addOption("b", "betting-amount", true, "Betting amount");
+        options.addOption("c", "config", true, "config file which is described top of the document");
+        options.addOption("b", "betting-amount", true, "betting amount");
 
         var parser = new DefaultParser();
         var formatter = new HelpFormatter();
@@ -41,17 +41,19 @@ public class Main {
             var gameProcessor = new GameProcessor();
             var matrix = gameProcessor.generateMatrix(config);
 
-            System.out.println("Generated Matrix:");
+            System.out.println("matrix:");
             for (String[] row : matrix) {
                 System.out.println(Arrays.toString(row));
             }
 
-
-        } catch (ParseException e) {
-            System.err.println("Error parsing arguments: " + e.getMessage());
+            var winCombinations = gameProcessor.checkWinningCombinations(matrix, config);
+            var reward = gameProcessor.calculateReward(betAmount, winCombinations, config);
+            System.out.println("reward: " + reward);
+        } catch (ParseException err) {
+            System.err.println("Error parsing arguments: " + err.getMessage());
             formatter.printHelp("Main", options);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException err) {
+            err.printStackTrace();
         }
     }
 }
