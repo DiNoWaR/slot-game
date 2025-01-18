@@ -10,7 +10,6 @@ public class GameProcessor {
      * We assume that bonus symbol possibility is 10% because it is not mentioned in TD
      */
     private static final int BONUS_SYMBOL_POSSIBILITY = 10;
-
     private final Random random = new Random();
 
     public String[][] generateMatrix(GameConfig config) {

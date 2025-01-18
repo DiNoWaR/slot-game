@@ -38,9 +38,11 @@ class GameProcessorTest {
         };
 
         var result = processor.checkWinningCombinations(matrix, config);
-        var expected = Map.of("A", List.of("same_symbol_3_times", "same_symbols_horizontally"));
+        var expectedCombinations = Map.of("A", List.of("same_symbol_3_times", "same_symbols_horizontally"));
+        assertEquals(expectedCombinations, result, "");
 
-        assertEquals(expected, result, "");
+        var actualReward = processor.calculateReward(matrix, betAmount, expectedCombinations, config);
+        assertEquals(10000, actualReward, "");
     }
 
     @Test
@@ -53,8 +55,11 @@ class GameProcessorTest {
 
         var result = processor.checkWinningCombinations(matrix, config);
 
-        var expected = Map.of();
-        assertEquals(expected, result, "");
+        Map<String, List<String>> expectedCombinations = Map.of();
+        assertEquals(expectedCombinations, result, "");
+
+        var actualReward = processor.calculateReward(matrix, betAmount, expectedCombinations, config);
+        assertEquals(0, actualReward, "");
     }
 
     @Test
@@ -66,9 +71,12 @@ class GameProcessorTest {
         };
 
         var result = processor.checkWinningCombinations(matrix, config);
-        var expected = Map.of("A", List.of("same_symbol_3_times", "same_symbols_vertically"));
+        var expectedCombinations = Map.of("A", List.of("same_symbol_3_times", "same_symbols_vertically"));
 
-        assertEquals(expected, result, "");
+        assertEquals(expectedCombinations, result, "");
+
+        var actualReward = processor.calculateReward(matrix, betAmount, expectedCombinations, config);
+        assertEquals(10000, actualReward, "");
     }
 
     @Test
@@ -80,9 +88,12 @@ class GameProcessorTest {
         };
 
         var result = processor.checkWinningCombinations(matrix, config);
-        var expected = Map.of("A", List.of("same_symbol_3_times", "same_symbols_diagonally_left_to_right"));
+        var expectedCombinations = Map.of("A", List.of("same_symbol_3_times", "same_symbols_diagonally_left_to_right"));
 
-        assertEquals(expected, result, "");
+        assertEquals(expectedCombinations, result, "");
+
+        var actualReward = processor.calculateReward(matrix, betAmount, expectedCombinations, config);
+        assertEquals(25000, actualReward, "");
     }
 
     @Test
@@ -94,12 +105,15 @@ class GameProcessorTest {
         };
 
         var result = processor.checkWinningCombinations(matrix, config);
-        var expected = Map.of(
+        var expectedCombinations = Map.of(
                 "A", List.of("same_symbol_3_times", "same_symbols_horizontally"),
                 "B", List.of("same_symbol_3_times", "same_symbols_horizontally")
         );
 
-        assertEquals(expected, result, "");
+        assertEquals(expectedCombinations, result, "");
+
+        var actualReward = processor.calculateReward(matrix, betAmount, expectedCombinations, config);
+        assertEquals(16000, actualReward, "");
     }
 
     @Test
@@ -111,9 +125,12 @@ class GameProcessorTest {
         };
 
         var result = processor.checkWinningCombinations(matrix, config);
-        var expected = Map.of("A", List.of("same_symbol_3_times", "same_symbols_horizontally"));
+        var expectedCombinations = Map.of("A", List.of("same_symbol_3_times", "same_symbols_horizontally"));
 
-        assertEquals(expected, result, "");
+        assertEquals(expectedCombinations, result, "");
+
+        var actualReward = processor.calculateReward(matrix, betAmount, expectedCombinations, config);
+        assertEquals(10500, actualReward, "");
     }
 
     @Test
@@ -125,11 +142,14 @@ class GameProcessorTest {
         };
 
         var result = processor.checkWinningCombinations(matrix, config);
-        var expected = Map.of(
+        var expectedCombinations = Map.of(
                 "F", List.of("same_symbol_4_times")
         );
 
-        assertEquals(expected, result, "");
+        assertEquals(expectedCombinations, result, "");
+
+        var actualReward = processor.calculateReward(matrix, betAmount, expectedCombinations, config);
+        assertEquals(1500, actualReward, "");
     }
 
     @Test
@@ -141,12 +161,15 @@ class GameProcessorTest {
         };
 
         var result = processor.checkWinningCombinations(matrix, config);
-        var expected = Map.of(
+        var expectedCombinations = Map.of(
                 "F", List.of("same_symbol_3_times"),
                 "E", List.of("same_symbol_3_times")
         );
 
-        assertEquals(expected, result, "");
+        assertEquals(expectedCombinations, result, "");
+
+        var actualReward = processor.calculateReward(matrix, betAmount, expectedCombinations, config);
+        assertEquals(2200, actualReward, "");
     }
 
     @Test
@@ -158,30 +181,20 @@ class GameProcessorTest {
         };
 
         var result = processor.checkWinningCombinations(matrix, config);
-        var expected = Map.of("F", List.of("same_symbol_6_times", "same_symbols_horizontally", "same_symbols_vertically"));
+        var expectedCombinations = Map.of("F", List.of("same_symbol_6_times", "same_symbols_horizontally", "same_symbols_vertically"));
 
-        assertEquals(result.keySet(), expected.keySet(), "");
+        assertEquals(result.keySet(), expectedCombinations.keySet(), "");
 
-        for (String key : expected.keySet()) {
+        for (String key : expectedCombinations.keySet()) {
             assertEquals(
-                    Set.copyOf(expected.get(key)),
+                    Set.copyOf(expectedCombinations.get(key)),
                     Set.copyOf(result.get(key)),
                     ""
             );
         }
+
+        var actualReward = processor.calculateReward(matrix, betAmount, expectedCombinations, config);
+        assertEquals(120000, actualReward, "");
     }
 
-    @Test
-    void testCheckEmptyWinningCombinations() {
-        String[][] matrix = {
-                {"E", "C", "E"},
-                {"A", "B", "A"},
-                {"10x", "F", "F"}
-        };
-
-        var result = processor.checkWinningCombinations(matrix, config);
-        var expected = Map.of();
-
-        assertEquals(result.keySet(), expected.keySet(), "");
-    }
 }
