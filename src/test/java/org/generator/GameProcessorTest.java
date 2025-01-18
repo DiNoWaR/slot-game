@@ -80,7 +80,7 @@ class GameProcessorTest {
         };
 
         var result = processor.checkWinningCombinations(matrix, config);
-        var expected = Map.of("A", List.of("same_symbol_3_times", "same_symbols_diagonally"));
+        var expected = Map.of("A", List.of("same_symbol_3_times", "same_symbols_diagonally_left_to_right"));
 
         assertEquals(expected, result, "");
     }
@@ -150,7 +150,7 @@ class GameProcessorTest {
     }
 
     @Test
-    void testCheckWinningCombinationsBgg() {
+    void testCheckWinningCombinationsOfThree() {
         String[][] matrix = {
                 {"E", "E", "F"},
                 {"F", "F", "F"},
@@ -171,4 +171,17 @@ class GameProcessorTest {
         }
     }
 
+    @Test
+    void testCheckEmptyWinningCombinations() {
+        String[][] matrix = {
+                {"E", "C", "E"},
+                {"A", "B", "A"},
+                {"10x", "F", "F"}
+        };
+
+        var result = processor.checkWinningCombinations(matrix, config);
+        var expected = Map.of();
+
+        assertEquals(result.keySet(), expected.keySet(), "");
+    }
 }

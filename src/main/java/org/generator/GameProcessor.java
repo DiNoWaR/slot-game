@@ -86,16 +86,25 @@ public class GameProcessor {
             }
         }
 
+        Map<String, String> maxCombinations = new HashMap<>();
+
         for (Map.Entry<String, GameConfig.WinCombination> entry : config.getWinCombinations().entrySet()) {
             GameConfig.WinCombination combination = entry.getValue();
             if ("same_symbols".equals(combination.getWhen())) {
                 for (Map.Entry<String, Integer> symbolCount : symbolCounts.entrySet()) {
-                    if (symbolCount.getValue() >= combination.getCount()) {
-                        winningCombinations.putIfAbsent(symbolCount.getKey(), new ArrayList<>());
-                        winningCombinations.get(symbolCount.getKey()).add(entry.getKey());
-                    }
+                    String symbol = symbolCount.getKey();
+                    int count = symbolCount.getValue();
+
+                    if (count >= combination.getCount() && (!maxCombinations.containsKey(symbol) || config.getWinCombinations().get(maxCombinations.get(symbol)).getCount() < combination.getCount())) {
+                            maxCombinations.put(symbol, entry.getKey());
+                        }
                 }
             }
+        }
+
+        for (Map.Entry<String, String> entry : maxCombinations.entrySet()) {
+            winningCombinations.putIfAbsent(entry.getKey(), new ArrayList<>());
+            winningCombinations.get(entry.getKey()).add(entry.getValue());
         }
     }
 
