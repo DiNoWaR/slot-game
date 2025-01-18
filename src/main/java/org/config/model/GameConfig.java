@@ -35,12 +35,17 @@ public class GameConfig {
         return probabilities;
     }
 
+
+    public Map<String, Symbol> getSymbols() {
+        return symbols;
+    }
+
     public Map<String, WinCombination> getWinCombinations() {
         return winCombinations;
     }
 
-    public Map<String, Symbol> getSymbols() {
-        return symbols;
+    public void setWinCombinations(Map<String, WinCombination> winCombinations) {
+        this.winCombinations = winCombinations;
     }
 
     public static class Symbol {
@@ -143,6 +148,20 @@ public class GameConfig {
         @JsonProperty("covered_areas")
         private List<List<String>> coveredAreas;
 
+
+        public WinCombination(
+                @JsonProperty("reward_multiplier") Integer rewardMultiplier,
+                @JsonProperty("when") String when,
+                @JsonProperty("count") Integer count,
+                @JsonProperty("group") String group,
+                @JsonProperty("covered_areas") List<List<String>> coveredAreas) {
+            this.rewardMultiplier = rewardMultiplier;
+            this.when = when;
+            this.count = count;
+            this.group = group;
+            this.coveredAreas = coveredAreas;
+        }
+
         public Integer getRewardMultiplier() {
             return rewardMultiplier;
         }
@@ -162,6 +181,7 @@ public class GameConfig {
         public List<List<String>> getCoveredAreas() {
             return coveredAreas;
         }
+
     }
 
 }

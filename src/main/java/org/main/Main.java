@@ -47,7 +47,7 @@ public class Main {
             }
 
             var winCombinations = gameProcessor.checkWinningCombinations(matrix, config);
-            var reward = gameProcessor.calculateReward(betAmount, winCombinations, config);
+            var reward = gameProcessor.calculateReward(matrix, betAmount, winCombinations, config);
             System.out.println("reward: " + reward);
         } catch (ParseException err) {
             System.err.println("Error parsing arguments: " + err.getMessage());

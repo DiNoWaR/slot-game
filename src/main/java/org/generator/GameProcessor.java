@@ -42,7 +42,7 @@ public class GameProcessor {
         return winningCombinations;
     }
 
-    public double calculateReward(double betAmount, Map<String, List<String>> winningCombinations, GameConfig config) {
+    public double calculateReward(String[][] matrix, double betAmount, Map<String, List<String>> winningCombinations, GameConfig config) {
         if (betAmount <= 0) {
             throw new IllegalArgumentException("Bet amount must be greater than zero.");
         }
@@ -67,6 +67,11 @@ public class GameProcessor {
             }
 
             totalReward += symbolReward;
+        }
+
+        // Bonus symbols are only effective when there are at least one winning combinations matches with the generated matrix
+        if (!winningCombinations.isEmpty()) {
+            totalReward = applyBonusSymbols(totalReward, matrix, config);
         }
 
         return totalReward;
@@ -172,5 +177,28 @@ public class GameProcessor {
             }
         }
         return true;
+    }
+
+    private double applyBonusSymbols(double reward, String[][] matrix, GameConfig config) {
+        for (String[] row : matrix) {
+            for (String cell : row) {
+                GameConfig.Symbol symbol = config.getSymbols().get(cell);
+                if (symbol != null && "bonus".equals(symbol.getType())) {
+                    switch (symbol.getImpact()) {
+                        case "multiply_reward":
+                            reward *= symbol.getRewardMultiplier();
+                            break;
+                        case "extra_bonus":
+                            reward += symbol.getExtra();
+                            break;
+                        case "miss":
+                            break;
+                        default:
+                            throw new IllegalArgumentException("unknown impact: " + symbol.getImpact());
+                    }
+                }
+            }
+        }
+        return reward;
     }
 }

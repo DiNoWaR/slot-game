@@ -10,10 +10,13 @@ repositories {
 }
 
 dependencies {
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.18.2'
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.18.2'
-    implementation group: 'commons-cli', name: 'commons-cli', version: '1.9.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.2'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.18.2'
+
+    implementation 'commons-cli:commons-cli:1.9.0'
+
     testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
 }
 
 test {
