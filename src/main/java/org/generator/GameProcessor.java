@@ -24,7 +24,9 @@ public class GameProcessor {
             for (int col = 0; col < columns; col++) {
                 if (isBonus(random)) {
                     matrix[row][col] = getRandomBonusSymbol(bonusSymbols);
-                    gameResult.addBonusSymbol(matrix[row][col]);
+                    if (!Objects.equals(matrix[row][col], "MISS")) {
+                        gameResult.addBonusSymbol(matrix[row][col]);
+                    }
                 } else {
                     matrix[row][col] = getRandomStandardSymbol(standardSymbols, row, col);
                 }

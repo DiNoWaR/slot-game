@@ -9,10 +9,10 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GameConfig {
     @JsonProperty("columns")
-    private int columns;
+    private int columns = 3;
 
     @JsonProperty("rows")
-    private int rows;
+    private int rows = 3;
 
     @JsonProperty("symbols")
     private Map<String, Symbol> symbols;
