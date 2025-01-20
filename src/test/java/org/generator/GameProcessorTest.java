@@ -196,5 +196,4 @@ class GameProcessorTest {
         var actualReward = processor.calculateReward(matrix, betAmount, expectedCombinations, config);
         assertEquals(120000, actualReward, "");
     }
-
 }

@@ -1,11 +1,13 @@
 package org.main;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.cli.*;
 import org.config.parser.Parser;
 import org.generator.GameProcessor;
+import org.generator.Result;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) {
@@ -16,6 +18,7 @@ public class Main {
 
         var parser = new DefaultParser();
         var formatter = new HelpFormatter();
+        var gameResult = new Result();
 
         try {
             var cmd = parser.parse(options, args);
@@ -39,16 +42,24 @@ public class Main {
 
             var config = Parser.parseConfig(configPath);
             var gameProcessor = new GameProcessor();
-            var matrix = gameProcessor.generateMatrix(config);
-
-            System.out.println("matrix:");
-            for (String[] row : matrix) {
-                System.out.println(Arrays.toString(row));
-            }
+            var matrix = gameProcessor.generateMatrix(config, gameResult);
 
             var winCombinations = gameProcessor.checkWinningCombinations(matrix, config);
             var reward = gameProcessor.calculateReward(matrix, betAmount, winCombinations, config);
-            System.out.println("reward: " + reward);
+
+            gameResult.setReward(reward);
+            gameResult.setMatrix(matrix);
+            gameResult.setAppliedWinningCombinations(winCombinations);
+
+            if (reward == 0) {
+                gameResult.clearBonusSymbols();
+            }
+
+            var mapper = new ObjectMapper();
+            mapper.enable(SerializationFeature.INDENT_OUTPUT);
+            String jsonOutput = mapper.writeValueAsString(gameResult);
+            System.out.println(jsonOutput);
+
         } catch (ParseException err) {
             System.err.println("Error parsing arguments: " + err.getMessage());
             formatter.printHelp("Main", options);

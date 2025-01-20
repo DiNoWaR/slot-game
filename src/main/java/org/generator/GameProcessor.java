@@ -12,7 +12,7 @@ public class GameProcessor {
     private static final int BONUS_SYMBOL_POSSIBILITY = 10;
     private final Random random = new Random();
 
-    public String[][] generateMatrix(GameConfig config) {
+    public String[][] generateMatrix(GameConfig config, Result gameResult) {
         var rows = config.getRows();
         var columns = config.getColumns();
         var matrix = new String[rows][columns];
@@ -24,6 +24,7 @@ public class GameProcessor {
             for (int col = 0; col < columns; col++) {
                 if (isBonus(random)) {
                     matrix[row][col] = getRandomBonusSymbol(bonusSymbols);
+                    gameResult.addBonusSymbol(matrix[row][col]);
                 } else {
                     matrix[row][col] = getRandomStandardSymbol(standardSymbols, row, col);
                 }
